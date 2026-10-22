@@ -112,3 +112,11 @@ Console.WriteLine($"Осталось товаров: {remainingCount}");
 var olgaCustomer = db.Customers.Include(c => c.Orders).First(c => c.Name == "Ольга Смирнова");
 db.Customers.Remove(olgaCustomer);
 db.SaveChanges();
+
+/*
+Шаг 1 - название не может быть null (NOT NULL), а описание может (NULL), так как в C# string обязательный, а string? опциональный
+Шаг 2 - выбран тип DateTime, в PostgreSQL создался тип timestamp with time zone
+Шаг 3 - DateTime.Now возвращает локальное время устройства, DateTime.UtcNow - всемирное время
+Шаг 5 - чтобы гарантировать транзакционность. Изменения сохраняются атомарно, исключая рассинхронизацию остатков и заказов при сбое
+Шаг 6 - заказы удалились каскадно. Для магазина это плохо, так как теряется история продаж и финансовая отчётность
+*/
