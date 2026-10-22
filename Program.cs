@@ -99,3 +99,16 @@ var annaCustomer = db.Customers.First(c => c.Name == "Анна Сидорова"
 var stormProduct = db.Products.First(p => p.Name == "Штормовые");
 MakeOrder(db, annaCustomer, stormProduct, 100);
 MakeOrder(db, annaCustomer, stormProduct, 5);
+
+Console.WriteLine("=== Шаг 6 ===");
+
+var outOfStockProducts = db.Products.Where(p => p.StockQuantity == 0).ToList();
+db.Products.RemoveRange(outOfStockProducts);
+db.SaveChanges();
+
+var remainingCount = db.Products.Count();
+Console.WriteLine($"Осталось товаров: {remainingCount}");
+
+var olgaCustomer = db.Customers.Include(c => c.Orders).First(c => c.Name == "Ольга Смирнова");
+db.Customers.Remove(olgaCustomer);
+db.SaveChanges();
