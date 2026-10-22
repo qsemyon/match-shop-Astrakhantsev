@@ -5,3 +5,32 @@ Console.WriteLine("Магазин спичек «Чирк»: проект зап
 using var db = new ShopContext();
 db.Database.EnsureDeleted();
 db.Database.EnsureCreated();
+
+Console.WriteLine("=== Шаг 3 ===");
+
+var ivan = new Customer { Name = "Иван Петров", Phone = "+7 900 111-22-33", City = "Омск" };
+var olga = new Customer { Name = "Ольга Смирнова", Phone = "+7 900 444-55-66", City = "Томск" };
+var anna = new Customer { Name = "Анна Сидорова", Phone = "+7 900 777-88-99", City = "Москва" };
+var dmitry = new Customer { Name = "Дмитрий Козлов", Phone = "+7 900 333-22-11", City = "Омск" };
+var elena = new Customer { Name = "Елена Морозова", Phone = "+7 900 555-66-77", City = "Казань" };
+
+db.Customers.AddRange(ivan, olga, anna, dmitry, elena);
+
+var p1 = new Product { Name = "Бытовые", Price = 30m, MatchesPerBox = 40, StockQuantity = 200, Description = "Обычные спички" };
+var p2 = new Product { Name = "Хозяйственные", Price = 80m, MatchesPerBox = 100, StockQuantity = 150 };
+var p3 = new Product { Name = "Каминные", Price = 150m, MatchesPerBox = 50, StockQuantity = 80, Description = "Длинные" };
+var p4 = new Product { Name = "Штормовые", Price = 250m, MatchesPerBox = 20, StockQuantity = 50, Description = "Горят даже под дождём" };
+var p5 = new Product { Name = "Охотничьи", Price = 180m, MatchesPerBox = 30, StockQuantity = 70 };
+
+db.Products.AddRange(p1, p2, p3, p4, p5);
+
+var orders = new List<Order>
+{
+    new() { Customer = ivan, Product = p3, Quantity = 2, CreatedAt = DateTime.UtcNow },
+    new() { Customer = ivan, Product = p1, Quantity = 5, CreatedAt = DateTime.UtcNow },
+    new() { Customer = anna, Product = p4, Quantity = 1, CreatedAt = DateTime.UtcNow },
+    new() { Customer = dmitry, Product = p2, Quantity = 3, CreatedAt = DateTime.UtcNow }
+};
+
+db.Orders.AddRange(orders);
+db.SaveChanges();
