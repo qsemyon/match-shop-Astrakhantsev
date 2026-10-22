@@ -57,3 +57,45 @@ foreach (var o in allOrders)
     Console.WriteLine($"{o.Customer.Name} — {o.Product.Name} — {o.Quantity} шт. — {sum} ₽");
 }
 Console.WriteLine($"Выручка: {totalRevenue} ₽");
+
+Console.WriteLine("=== Шаг 5 ===");
+
+var customer = db.Customers.First(c => c.Name == "Иван Петров");
+customer.Phone = "+7 900 999-00-00";
+
+foreach (var product in db.Products)
+{
+    product.Price *= 1.1m;
+}
+
+var zeroStockProduct = db.Products.First(p => p.Name == "Бытовые");
+zeroStockProduct.StockQuantity = 0;
+
+db.SaveChanges();
+
+void MakeOrder(ShopContext context, Customer targetCustomer, Product targetProduct, int quantity)
+{
+    if (targetProduct.StockQuantity >= quantity)
+    {
+        var newOrder = new Order
+        {
+            Customer = targetCustomer,
+            Product = targetProduct,
+            Quantity = quantity,
+            CreatedAt = DateTime.UtcNow
+        };
+        targetProduct.StockQuantity -= quantity;
+        context.Orders.Add(newOrder);
+        context.SaveChanges();
+        Console.WriteLine($"Заказ оформлен: {targetCustomer.Name} — {targetProduct.Name} — {quantity} шт.");
+    }
+    else
+    {
+        Console.WriteLine("Недостаточно на складе");
+    }
+}
+
+var annaCustomer = db.Customers.First(c => c.Name == "Анна Сидорова");
+var stormProduct = db.Products.First(p => p.Name == "Штормовые");
+MakeOrder(db, annaCustomer, stormProduct, 100);
+MakeOrder(db, annaCustomer, stormProduct, 5);
