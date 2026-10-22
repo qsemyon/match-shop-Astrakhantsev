@@ -34,3 +34,26 @@ var orders = new List<Order>
 
 db.Orders.AddRange(orders);
 db.SaveChanges();
+
+Console.WriteLine("=== Шаг 4 ===");
+
+var cheapProducts = db.Products.Where(p => p.Price < 100m).OrderBy(p => p.Price).ToList();
+foreach (var p in cheapProducts)
+    Console.WriteLine($"{p.Name} — {p.Price} ₽");
+
+var inStockCount = db.Products.Count(p => p.StockQuantity > 0);
+Console.WriteLine($"Видов на складе: {inStockCount}");
+
+var expensiveProducts = db.Products.OrderByDescending(p => p.Price).Take(3).ToList();
+foreach (var p in expensiveProducts)
+    Console.WriteLine($"{p.Name} — {p.Price} ₽");
+
+var allOrders = db.Orders.Include(o => o.Customer).Include(o => o.Product).ToList();
+decimal totalRevenue = 0;
+foreach (var o in allOrders)
+{
+    var sum = o.Product.Price * o.Quantity;
+    totalRevenue += sum;
+    Console.WriteLine($"{o.Customer.Name} — {o.Product.Name} — {o.Quantity} шт. — {sum} ₽");
+}
+Console.WriteLine($"Выручка: {totalRevenue} ₽");
